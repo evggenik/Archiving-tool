@@ -1,3 +1,5 @@
+import command.ExitCommand;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
@@ -14,5 +16,7 @@ public class Archiver {
         String stringToZip2 = scanner.nextLine();
         Path pathToUnzip = Paths.get(stringToZip2);
         zfm.createZip(pathToUnzip);
+
+        new ExitCommand().execute();
     }
 }
