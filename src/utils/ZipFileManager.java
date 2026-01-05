@@ -1,3 +1,5 @@
+package utils;
+
 import exception.PathIsNotFoundException;
 
 import java.io.InputStream;
