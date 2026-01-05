@@ -1,22 +1,33 @@
-import command.ExitCommand;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Scanner;
+import exception.WrongZipFileException;
+import utils.ConsoleHelper;
+import utils.Operation;
+import java.io.IOException;
 
 public class Archiver {
     public static void main(String[] args) throws Exception {
-        System.out.println("Enter the full path of the zip archive.");
-        Scanner scanner = new Scanner(System.in);
-        String stringToZip = scanner.nextLine();
-        Path pathToZip = Paths.get(stringToZip);
-        ZipFileManager zfm = new ZipFileManager(pathToZip);
+        Operation operation = null;
+        do {
+            try {
+                operation = askOperation();
+                CommandExecutor.execute(operation);
+            } catch (WrongZipFileException e) {
+                ConsoleHelper.writeMessage("Вы не выбрали файл архива или выбрали неверный файл.");
+            } catch (Exception e) {
+                ConsoleHelper.writeMessage("Произошла ошибка. Проверьте введенные данные.");
+            }
 
-        System.out.println("Enter the full path of the file to be zipped.");
-        String stringToZip2 = scanner.nextLine();
-        Path pathToUnzip = Paths.get(stringToZip2);
-        zfm.createZip(pathToUnzip);
+        } while (operation != Operation.EXIT);
+    }
 
-        new ExitCommand().execute();
+    public static Operation askOperation() throws IOException {
+        ConsoleHelper.writeMessage("Выберите операцию:");
+        ConsoleHelper.writeMessage(Operation.CREATE.ordinal() + " - упаковать файлы в архив");
+        ConsoleHelper.writeMessage(Operation.ADD.ordinal() + " - добавить файл в архив");
+        ConsoleHelper.writeMessage(Operation.REMOVE.ordinal() + " - удалить файл из архива");
+        ConsoleHelper.writeMessage(Operation.EXTRACT.ordinal() + " - распаковать файл из архива");
+        ConsoleHelper.writeMessage(Operation.CONTENT.ordinal() + " - просмотреть содержимое архива");
+        ConsoleHelper.writeMessage(Operation.EXIT.ordinal() + " - выход");
+
+        return Operation.values()[ConsoleHelper.readInt()];
     }
 }
