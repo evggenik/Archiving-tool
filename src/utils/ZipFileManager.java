@@ -1,13 +1,17 @@
 package utils;
 
 import exception.PathIsNotFoundException;
+import exception.WrongZipFileException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipFileManager {
@@ -16,6 +20,30 @@ public class ZipFileManager {
 
     public ZipFileManager(Path zipFile) {
         this.zipFile = zipFile;
+    }
+
+    public List<FileProperties> getFilesList() throws Exception {
+        if (!Files.isRegularFile(zipFile))
+            throw new WrongZipFileException();
+        List<FileProperties> list = new ArrayList<>();
+        try(ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(zipFile))) {
+                ZipEntry entry;
+                while ((entry = zipInputStream.getNextEntry()) != null) {
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    copyData(zipInputStream, byteArrayOutputStream);
+                    byte[] data = byteArrayOutputStream.toByteArray();
+
+                    String fileName = entry.getName();
+                    long fileSize = data.length;
+                    long compressedSize = entry.getCompressedSize();
+                    int compressionMethod = entry.getMethod();
+
+                    list.add(new FileProperties(fileName, fileSize, compressedSize, compressionMethod));
+
+                    zipInputStream.closeEntry();
+                }
+        }
+        return list;
     }
 
     public void createZip(Path source) throws Exception {

@@ -1,3 +1,4 @@
+package utils;
 
 public class FileProperties {
     private String name;
