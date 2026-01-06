@@ -1,1 +1,2 @@
 Just another "big" task from javarush multithreading course. This time the purpose was to write a zip archiver.
+![Screenshot from 2026-01-06 18-47-27.png](img%2FScreenshot%20from%202026-01-06%2018-47-27.png)
